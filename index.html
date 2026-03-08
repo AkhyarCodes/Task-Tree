@@ -208,8 +208,9 @@
         window.toggleStatus = function(id) {
             findTask(tasks, id, (list, index) => {
                 const s = list[index].status;
-                // Still cycles through states for sorting, but 'done' won't show a tag anymore
-                list[index].status = s === 'default' ? 'doing' : s === 'doing' ? 'done' : 'default';
+                // Simplified toggle: if it's default (NEXT), make it DOING. 
+                // If it was DOING or hidden DONE, go back to default.
+                list[index].status = s === 'default' ? 'doing' : 'default';
             });
             saveAndRefresh();
         };
@@ -251,9 +252,8 @@
 
         function generateTaskHtml(task, isSubtask = false, isParentDoing = false) {
             const isDoing = task.status === 'doing' || isParentDoing;
-            const isDone = task.status === 'done';
             
-            // Logic updated: Only show DOING or NEXT. 'done' now maps to the 'default' look.
+            // Logic updated: simplified status checks for cleaner UI
             const pillColor = task.status === 'doing' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400';
             const label = task.status === 'doing' ? 'DOING' : 'NEXT';
 
