@@ -6,7 +6,6 @@
     <title>Hierarchical Task Manager</title>
     
     <!-- ADD TAB ICON (FAVICON) HERE -->
-    <!-- You can replace the href with a link to your own icon image -->
     <link rel="icon" type="image/png" href="https://is.kzoo.edu/wp-content/uploads/sites/16/2022/06/To-Do_256x256.png">
     
     <!-- Importing Fredoka from Google Fonts for a playful look -->
@@ -16,7 +15,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            /* Applying Fredoka font for a rounded, playful feel */
             font-family: 'Fredoka', system-ui, -apple-system, sans-serif;
         }
         
@@ -55,10 +53,9 @@
             box-shadow: 0 4px 12px -2px rgb(59 130 246 / 0.15);
         }
 
+        /* Removed grayscale/opacity for done status to keep it clean */
         .status-done {
-            opacity: 0.5;
-            text-decoration: line-through;
-            filter: grayscale(0.8);
+            text-decoration: none; 
         }
 
         .btn-icon {
@@ -137,12 +134,8 @@
             </div>
         </div>
 
-        <!-- Task List Container -->
-        <div id="taskList" class="p-8 space-y-3 min-h-[350px]">
-            <!-- Tasks injected here -->
-        </div>
+        <div id="taskList" class="p-8 space-y-3 min-h-[350px]"></div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden py-24 px-8 text-center">
             <div class="w-20 h-20 bg-blue-50 rounded-[2rem] flex items-center justify-center mx-auto mb-6 border border-blue-100/50">
                 <svg class="text-blue-200" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
@@ -215,6 +208,7 @@
         window.toggleStatus = function(id) {
             findTask(tasks, id, (list, index) => {
                 const s = list[index].status;
+                // Still cycles through states for sorting, but 'done' won't show a tag anymore
                 list[index].status = s === 'default' ? 'doing' : s === 'doing' ? 'done' : 'default';
             });
             saveAndRefresh();
@@ -259,14 +253,14 @@
             const isDoing = task.status === 'doing' || isParentDoing;
             const isDone = task.status === 'done';
             
-            const pillColor = task.status === 'doing' ? 'bg-blue-600 text-white' : 
-                               isDone ? 'bg-slate-200 text-slate-500' : 'bg-slate-100 text-slate-400';
-            const label = task.status === 'doing' ? 'DOING' : isDone ? 'DONE' : 'NEXT';
+            // Logic updated: Only show DOING or NEXT. 'done' now maps to the 'default' look.
+            const pillColor = task.status === 'doing' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400';
+            const label = task.status === 'doing' ? 'DOING' : 'NEXT';
 
             return `
                 <div class="task-node animate-slide ${isDoing ? 'branch-highlight' : ''}">
                     ${isSubtask ? '<div class="connector-line"></div>' : ''}
-                    <div class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 bg-white hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/5 transition-all ${task.status === 'doing' ? 'status-doing' : ''} ${isDone ? 'status-done' : ''}">
+                    <div class="flex items-center gap-3 p-4 rounded-2xl border border-slate-100 bg-white hover:border-blue-200 hover:shadow-lg hover:shadow-blue-500/5 transition-all ${task.status === 'doing' ? 'status-doing' : ''}">
                         
                         ${!isSubtask ? `
                             <button onclick="toggleStatus('${task.id}')" 
